@@ -11,6 +11,8 @@ from .filters import PostFilter
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated
 # Create your views here.
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -24,7 +26,7 @@ class PostViewSet(viewsets.ModelViewSet):
     ordering = ['created_at']
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = super().get_queryset().prefetch_related('likes')
         if self.request.user.is_authenticated:
             return queryset.filter(models.Q(draft=False) | models.Q(author=self.request.user))
         return queryset.filter(draft=False)
@@ -41,6 +43,17 @@ class PostViewSet(viewsets.ModelViewSet):
         post.draft = False
         post.save()
         return Response({'status': 'post published'}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['post', 'get'], permission_classes=[IsAuthenticated])
+    def like(self, request, pk=None):
+        post = self.get_object()
+        user = request.user
+        if user in post.likes.all():
+            post.likes.remove(user)
+            return Response({'status': 'post unliked'}, status=status.HTTP_200_OK)
+        else:
+            post.likes.add(user)
+            return Response({'status': 'post liked'}, status=status.HTTP_200_OK)
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Category.objects.all()

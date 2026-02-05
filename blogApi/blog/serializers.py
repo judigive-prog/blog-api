@@ -5,9 +5,10 @@ from rest_framework.relations import StringRelatedField
 class PostSerializer(serializers.ModelSerializer):
     tags = StringRelatedField(many=True)
     author = serializers.ReadOnlyField(source='author.username')
+    like_count = serializers.IntegerField(source='likes.count', read_only=True)
     class Meta:
         model = Post
-        fields = '__all__'
+        fields = ['id', 'title', 'content', 'category', 'created_at', 'updated_at', 'author', 'draft', 'tags', 'like_count']
 
 class CategorySerializer(serializers.ModelSerializer):
     posts = StringRelatedField(many=True, read_only=True)
