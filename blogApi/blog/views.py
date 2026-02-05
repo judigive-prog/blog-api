@@ -17,6 +17,9 @@ class PostViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthorOrReadOnly]
     filterset_class = PostFilter
 
+    ordering_fields = ['created_at', 'updated_at']
+    ordering = ['created_at']
+
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
