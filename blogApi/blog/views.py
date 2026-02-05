@@ -7,6 +7,7 @@ from blogApi.blog import permissions
 from rest_framework.views import APIView
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.generics import CreateAPIView
+from .filters import PostFilter
 # Create your views here.
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -14,6 +15,7 @@ class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
 
     permission_classes = [permissions.IsAuthorOrReadOnly]
+    filterset_class = PostFilter
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Category.objects.all()
