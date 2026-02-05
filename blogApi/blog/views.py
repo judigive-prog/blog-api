@@ -13,6 +13,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
+from django.db import models
 # Create your views here.
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -22,7 +23,7 @@ class PostViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthorOrReadOnly]
     filterset_class = PostFilter
 
-    ordering_fields = ['created_at', 'updated_at']
+    ordering_fields = ['created_at', 'updated_at', 'likes_count']
     ordering = ['created_at']
 
     def get_queryset(self):
